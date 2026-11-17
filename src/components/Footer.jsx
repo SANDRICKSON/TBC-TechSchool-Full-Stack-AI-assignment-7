@@ -1,20 +1,31 @@
 import React from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import SocialLink from './SocialLink';
 
 /**
- * Footer component
+ * Footer component with React Router navigation
  * @param {Object} props
  * @param {Function} [props.onNavigate] - Callback for internal links
  */
 export default function Footer({ onNavigate }) {
   const currentYear = 2026;
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const scrollTo = (id) => {
-    if (onNavigate) {
-      onNavigate(id);
+    if (location.pathname !== '/') {
+      navigate('/');
+      setTimeout(() => {
+        const elem = document.getElementById(id);
+        if (elem) elem.scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    } else {
+      if (onNavigate) {
+        onNavigate(id);
+      }
+      const elem = document.getElementById(id);
+      if (elem) elem.scrollIntoView({ behavior: 'smooth' });
     }
-    const elem = document.getElementById(id);
-    if (elem) elem.scrollIntoView({ behavior: 'smooth' });
   };
 
   return (
@@ -37,6 +48,13 @@ export default function Footer({ onNavigate }) {
             თანამშრომლები
           </button>
 
+          <Link
+            to="/users"
+            className="hover:text-purple-400 transition cursor-pointer"
+          >
+            Users
+          </Link>
+
           <button
             onClick={() => scrollTo('contact')}
             className="hover:text-purple-400 transition cursor-pointer"
@@ -51,4 +69,3 @@ export default function Footer({ onNavigate }) {
     </footer>
   );
 }
-

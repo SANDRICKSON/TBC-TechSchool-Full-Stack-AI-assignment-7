@@ -1,19 +1,23 @@
 import React, { useState, useEffect } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
-import Hero from './sections/Hero';
-import About from './sections/About';
-import Skills from './sections/Skills';
-import Projects from './sections/Projects';
-import Experience from './sections/Experience';
-import Employees from './sections/Employees';
-import Contact from './sections/Contact';
+import Home from './pages/Home';
+import Users from './pages/Users';
 
 export default function App() {
   const [activeSection, setActiveSection] = useState('hero');
+  const location = useLocation();
 
-  // IntersectionObserver to update active navbar item while scrolling
+  // Scroll to top whenever route changes
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [location.pathname]);
+
+  // Scroll listener to update active navbar item when on the home page
+  useEffect(() => {
+    if (location.pathname !== '/') return;
+
     const sectionIds = [
       'hero',
       'about',
@@ -41,7 +45,7 @@ export default function App() {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [location.pathname]);
 
   return (
     <div className="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-georgian selection:bg-purple-500 selection:text-white relative overflow-x-hidden">
@@ -56,15 +60,13 @@ export default function App() {
         setActiveSection={setActiveSection}
       />
 
-      {/* Main Content Area */}
+      {/* Main Content Area with React Router Routes */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 sm:py-12 md:py-16 space-y-16 sm:space-y-20">
-        <Hero onNavigate={setActiveSection} />
-        <About />
-        <Skills />
-        <Projects />
-        <Experience />
-        <Employees />
-        <Contact />
+        <Routes>
+          <Route path="/" element={<Home onNavigate={setActiveSection} />} />
+          <Route path="/users" element={<Users />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
 
       {/* Footer */}
@@ -72,4 +74,3 @@ export default function App() {
     </div>
   );
 }
-
